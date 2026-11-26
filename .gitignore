@@ -12,9 +12,11 @@ AppData/
 stderr.log
 stdout.log
 
-# Compiled binaries
+# Compiled binaries & release artifacts
 *.exe
 *.dll
+*.zip
+dist/
 
 # Dependencies
 node_modules/

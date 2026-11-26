@@ -494,9 +494,14 @@ func main() {
 	launcherDir := filepath.Dir(exePath)
 
 	// Multi-Instance Profile Isolation Structure
-	// Root base: C:\Users\phamn\.gemini\antigravity\scratch\zalo-ultra-client
-	baseScratchDir := filepath.Clean(filepath.Join(launcherDir, ".."))
-	profileDir := filepath.Join(baseScratchDir, "profiles", profileName)
+	// Use ../profiles/<name> in repo launcher/ layout, or ./ZaloUltra_Profiles/<name> when run standalone
+	var profileDir string
+	if strings.EqualFold(filepath.Base(launcherDir), "launcher") {
+		baseScratchDir := filepath.Clean(filepath.Join(launcherDir, ".."))
+		profileDir = filepath.Join(baseScratchDir, "profiles", profileName)
+	} else {
+		profileDir = filepath.Join(launcherDir, "ZaloUltra_Profiles", profileName)
+	}
 	roamingDir := filepath.Join(profileDir, "AppData", "Roaming")
 	zaloDataDir := filepath.Join(roamingDir, "ZaloData")
 	localDir := filepath.Join(profileDir, "AppData", "Local")
@@ -544,7 +549,7 @@ func main() {
 	// Locate Zalo Executable
 	zaloExe, err := findZaloExe(customExe, launcherDir)
 	if err != nil {
-		showFatalError("Zalo Not Found", fmt.Sprintf("Could not find Zalo executable:\n%v", err))
+		showFatalError("Khong tim thay Zalo PC / Zalo Not Found", fmt.Sprintf("Vui long cai dat Zalo PC ban chinh thuc tai https://zalo.me/pc roi mo lai Zalo Ultra.\n\nPlease install official Zalo PC from https://zalo.me/pc and try again.\n\nChi tiet / Details: %v", err))
 	}
 	logMsg("[RUNTIME] Selected Zalo binary: %s", zaloExe)
 
