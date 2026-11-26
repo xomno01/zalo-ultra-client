@@ -1,0 +1,20 @@
+# User data & profiles (NEVER commit)
+profiles/
+ZaloData/
+AppData/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite*
+
+# Logs & temp artifacts
+*.log
+stderr.log
+stdout.log
+
+# Compiled binaries
+*.exe
+*.dll
+
+# Dependencies
+node_modules/

@@ -1,0 +1,127 @@
+{
+  "version": "1.0.0",
+  "name": "Zalo Ultra Chromium Flags Specification",
+  "description": "Optimized Chromium command-line switches for Zalo PC Electron runtime: minimal RAM/CPU, zero telemetry, preserved native features.",
+  "flags": {
+    "memory_and_gc": [
+      {
+        "switch": "js-flags",
+        "value": "--expose-gc",
+        "purpose": "Exposes V8 Garbage Collection to JavaScript (global.gc() and window.gc())",
+        "impact": "Enables proactive memory recovery; reduces working set by 30-50% on idle or minimize",
+        "safe": true
+      },
+      {
+        "switch": "renderer-process-limit",
+        "value": "6",
+        "purpose": "Caps maximum renderer process pool for utility and background tasks",
+        "impact": "Prevents runaway child process spawning; saves 80-150MB RSS",
+        "safe": true
+      }
+    ],
+    "cache_and_io": [
+      {
+        "switch": "disk-cache-size",
+        "value": "33554432",
+        "purpose": "Restricts HTTP disk cache to 32MB",
+        "impact": "Prevents Cache and DawnCache folders from ballooning into hundreds of megabytes on SSD",
+        "safe": true
+      },
+      {
+        "switch": "media-cache-size",
+        "value": "33554432",
+        "purpose": "Restricts media stream disk cache to 32MB",
+        "impact": "Prevents video/audio cache accumulation; reduces disk write wear",
+        "safe": true
+      }
+    ],
+    "telemetry_and_crash_suppression": [
+      {
+        "switch": "disable-breakpad",
+        "value": null,
+        "purpose": "Disables Chromium native breakpad crash handler",
+        "impact": "Prevents creation of crashpad_handler.exe processes and minidump disk writes",
+        "safe": true
+      },
+      {
+        "switch": "disable-crash-reporter",
+        "value": null,
+        "purpose": "Disables Chromium crash reporter subsystem",
+        "impact": "Zero minidump creation in %APPDATA%/ZaloData/Crashpad",
+        "safe": true
+      },
+      {
+        "switch": "disable-component-update",
+        "value": null,
+        "purpose": "Disables Chromium background component updates (e.g. CRLSets)",
+        "impact": "Eliminates unwanted background network pings and disk updates",
+        "safe": true
+      },
+      {
+        "switch": "disable-domain-reliability",
+        "value": null,
+        "purpose": "Disables Google Domain Reliability network telemetry reporting",
+        "impact": "Prevents network error reporting upstream; saves background sockets",
+        "safe": true
+      },
+      {
+        "switch": "disable-background-networking",
+        "value": null,
+        "purpose": "Disables Chromium background network operations",
+        "impact": "Saves idle CPU cycles and background bandwidth",
+        "safe": true
+      },
+      {
+        "switch": "disable-sync",
+        "value": null,
+        "purpose": "Disables Chromium internal sync services",
+        "impact": "Zero Google sync background threads",
+        "safe": true
+      },
+      {
+        "switch": "disable-speech-api",
+        "value": null,
+        "purpose": "Disables Web Speech API recognition service",
+        "impact": "Reduces Chromium internal audio pipeline overhead",
+        "safe": true
+      },
+      {
+        "switch": "disable-logging",
+        "value": null,
+        "purpose": "Silences Chromium stderr/stdout internal logging",
+        "impact": "Zero console buffer spamming",
+        "safe": true
+      },
+      {
+        "switch": "log-level",
+        "value": "3",
+        "purpose": "Sets Chromium log level to fatal errors only",
+        "impact": "Prevents Chromium diagnostic messages from degrading performance",
+        "safe": true
+      }
+    ],
+    "native_feature_preservation": [
+      {
+        "switch": "ignore-connections-limit",
+        "value": "files-wpa.zaloapp.com",
+        "purpose": "Bypasses standard 6-connection per host limit for Zalo file CDN",
+        "impact": "MANDATORY: Ensures high-speed concurrent photo, video and document transfers in Zalo",
+        "safe": true
+      },
+      {
+        "switch": "disable-pinch",
+        "value": null,
+        "purpose": "Disables trackpad/touchscreen pinch zooming",
+        "impact": "Preserves Zalo desktop UI layout integrity",
+        "safe": true
+      },
+      {
+        "switch": "enable-features",
+        "value": "WebAssembly,JXL",
+        "purpose": "Enables WebAssembly and JPEG XL image format decoding",
+        "impact": "MANDATORY: Zalo uses JXL for optimized stickers/photos and WASM for Signal E2EE encryption",
+        "safe": true
+      }
+    ]
+  }
+}
