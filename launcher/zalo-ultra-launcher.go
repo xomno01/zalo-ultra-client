@@ -472,7 +472,7 @@ func main() {
 	flag.StringVar(&customDataDir, "data-dir", "", "Custom path to ZaloData directory (optional)")
 	flag.IntVar(&debugPort, "port", 9333, "Chromium Remote Debugging Port (default: 9333)")
 	flag.StringVar(&customExe, "exe", "", "Custom path to Zalo.exe executable")
-	flag.IntVar(&compactSeconds, "compact-interval", 45, "Periodic RAM compaction interval in seconds")
+	flag.IntVar(&compactSeconds, "compact-interval", 120, "Periodic RAM compaction interval in seconds")
 	flag.BoolVar(&showHelp, "help", false, "Display help instructions")
 	flag.Parse()
 
@@ -482,7 +482,7 @@ func main() {
 
 	if showHelp {
 		fmt.Println("Zalo Ultra Client - Native Go Launcher & Active Memory Compactor")
-		fmt.Println("Usage: zalo-ultra.exe [--profile=<name>] [--port=9333] [--exe=<path>] [--compact-interval=45]")
+		fmt.Println("Usage: zalo-ultra.exe [--profile=<name>] [--port=9333] [--exe=<path>] [--compact-interval=120]")
 		return
 	}
 
@@ -569,7 +569,7 @@ func main() {
 		"--autoplay-policy=no-user-gesture-required",
 		"--disk-cache-size=33554432",
 		"--media-cache-size=33554432",
-		"--js-flags=--expose-gc --max-old-space-size=96 --optimize-for-size",
+		"--js-flags=--expose-gc --max-old-space-size=320",
 		fmt.Sprintf("--remote-debugging-port=%d", actualPort),
 		fmt.Sprintf(`--user-data-dir=%s`, zaloDataDir),
 	}
@@ -610,7 +610,7 @@ func main() {
 
 	// Background Goroutine: Active Win32 RAM Compactor (< 2MB overhead)
 	go func() {
-		ticker := time.NewTicker(5 * time.Second)
+		ticker := time.NewTicker(10 * time.Second)
 		defer ticker.Stop()
 
 		var lastCompaction time.Time
@@ -642,7 +642,7 @@ func main() {
 				shouldCompact := false
 				reason := ""
 
-				if isMin && !minimizedLogged && elapsedSinceLast >= 15*time.Second {
+				if isMin && !minimizedLogged && elapsedSinceLast >= 30*time.Second {
 					shouldCompact = true
 					reason = "Window Minimized"
 					minimizedLogged = true
@@ -650,7 +650,7 @@ func main() {
 					minimizedLogged = false
 				}
 
-				if !shouldCompact && idleSec >= 10 && elapsedSinceLast >= time.Duration(compactSeconds)*time.Second {
+				if !shouldCompact && idleSec >= 30 && elapsedSinceLast >= time.Duration(compactSeconds)*time.Second {
 					shouldCompact = true
 					reason = fmt.Sprintf("Idle (%d sec pause)", idleSec)
 				}
@@ -660,9 +660,9 @@ func main() {
 					reason = fmt.Sprintf("Background State (%ds)", compactSeconds)
 				}
 
-				if !shouldCompact && elapsedSinceLast >= time.Duration(compactSeconds*2)*time.Second {
+				if !shouldCompact && elapsedSinceLast >= time.Duration(compactSeconds*3)*time.Second {
 					shouldCompact = true
-					reason = fmt.Sprintf("Gentle Foreground Sweep (%ds)", compactSeconds*2)
+					reason = fmt.Sprintf("Gentle Foreground Sweep (%ds)", compactSeconds*3)
 				}
 
 				if shouldCompact {

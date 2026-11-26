@@ -25,8 +25,8 @@ Zalo Ultra không viết lại app giả mạo (tránh bị khóa tài khoản b
 ### 1. Tối ưu & Nén RAM chủ động (Active RAM Compactor)
 - **Win32 Working Set Trimming:** Gọi trực tiếp `EmptyWorkingSet` định kỳ trên toàn bộ cây tiến trình `Zalo.exe` để giải phóng trang nhớ vật lý nhàn rỗi.
 - **CDP V8 Garbage Collection:** Kết nối tới Remote Debugging Port (`127.0.0.1:9333+`) qua WebSocket RFC 6455 tự viết để phát lệnh `HeapProfiler.collectGarbage` và `window.gc()` tới toàn bộ renderer/webview.
-- **Ép trần V8 & Cache:** Giới hạn heap JavaScript (`--max-old-space-size=96 --optimize-for-size`), khóa Disk Cache & Media Cache tối đa `32 MB` mỗi loại (`33554432` bytes).
-- **Linh hoạt chu kỳ nén (`--compact-interval`):** Mặc định `45s` (tối thiểu `15s`), kiểm tra mỗi `5s`: tự động nén khi thu nhỏ cửa sổ (`15s`), khi máy idle (`compactSeconds`), chạy nền (`compactSeconds`), và nén nhẹ khi đang dùng trực tiếp (`2 × compactSeconds`).
+- **Cân bằng V8 Heap & Cache:** Giới hạn heap JavaScript ở mức cân bằng (`--expose-gc --max-old-space-size=320`, bỏ `--optimize-for-size` để tránh re-JIT/GC liên tục), khóa Disk Cache & Media Cache tối đa `32 MB` mỗi loại (`33554432` bytes).
+- **Chu kỳ nén thông minh (`--compact-interval`):** Mặc định `120s` (tối thiểu `15s`), kiểm tra mỗi `10s`: chỉ nén khi thu nhỏ cửa sổ (`30s`), khi máy idle >= `30s` (`compactSeconds`), chạy nền (`compactSeconds`), và nén nhẹ khi đang dùng trực tiếp (`3 × compactSeconds` = `360s`) để không gây khựng hay tăng CPU khi chat.
 - **Bảo vệ luồng gọi VoIP:** Tự động loại trừ `ZaloCall.exe` khỏi danh sách `EmptyWorkingSet` để giữ nguyên buffer âm thanh/RTP, đảm bảo đổ chuông tức thì không bị khựng.
 
 ### 2. Triệt tiêu Telemetry & Spam ghi ổ đĩa (Zero Disk Wear)
@@ -64,17 +64,17 @@ Zalo Ultra không viết lại app giả mạo (tránh bị khóa tài khoản b
   <img src="assets/benchmark-pixel.svg" alt="Zalo Ultra Benchmark Pixel Chart" width="100%" />
 </div>
 
-| Tiêu chí (đo cùng lúc 11 tiến trình mỗi bên) | Zalo Gốc (`Zalo-26.11.20`) | Zalo Ultra Client | Ghi chú |
+| Tiêu chí (đo song song trên Windows, cấu hình `320 MB` / `120s`) | Zalo Gốc (`Zalo-26.11.20`, 11 procs) | Zalo Ultra Client (10 procs) | Ghi chú |
 | :--- | :--- | :--- | :--- |
-| **RAM vật lý (Working Set)** | `956.3 MB` | **`380.8 MB`** (active) / **`~65–130 MB`** (idle/min) | **Ultra nhẹ RAM hơn 2.5 – 10x** |
-| **RAM cấp phát riêng (Private Commit)** | `1,555.3 MB` | **`914.2 MB`** | **Ultra nhẹ hơn ~41%** |
-| **CPU trung bình theo thời gian** | **`7.94s CPU / phút`** | `26.06s CPU / phút` | Ultra tốn CPU hơn do `--max-old-space-size=96` ép V8 GC thường xuyên + `EmptyWorkingSet` |
+| **RAM cấp phát riêng (Private Commit)** | `1,569.0 MB` | **`802.4 MB`** | **Ultra nhẹ hơn ~48.9%** |
+| **RAM vật lý (Working Set)** | `376.3 MB` (nền idle) / `~956 MB` (active) | **`424.4 MB`** (active) / **`5.5 MB`** (sau nén) | Nhịp nén boot giải phóng `922.0 MB` (`927.5 → 5.5 MB`) |
+| **CPU trung bình theo thời gian (đo delta `20.3s`)** | **`1.11s CPU / phút`** (`0.375s`) | **`2.82s CPU / phút`** (`0.953s`) | **Giảm ~9.2x CPU** so với cấu hình cũ `96 MB` (`26.06s / phút`) |
 | **Spam log CALF Brotli / Sentry** | Ghi liên tục | **0 KB/s (Đã triệt tiêu)** | Bảo vệ SSD, sạch network |
 | **VoIP khi chạy song song** | Pipe mặc định | **Pipe tách động `_ultra_<port>`** | Không xung đột giữa nhiều bản |
 | **Chớp chuột `ZaloCap.exe`** | Bị khi chạy chung | **Đã fix 100% (`[CAP-GUARD]`)** | Zalo gốc giữ nguyên 1 PID ổn định |
 
 > [!TIP]
-> **Trade-off RAM vs CPU:** Cấu hình hiện tại ưu tiên **ép RAM tối đa** (phù hợp máy 8–16 GB RAM hoặc chạy nhiều tài khoản). Nếu máy dư RAM và muốn **CPU mát hơn**, hãy tăng `--max-old-space-size` (ví dụ `256`–`384`) trong [zalo-ultra-launcher.go](launcher/zalo-ultra-launcher.go) & [bootstrap-ultra.js](runtime/bootstrap-ultra.js), rồi build lại launcher.
+> **Cân bằng CPU & RAM mặc định:** Cấu hình mới dùng V8 heap `320 MB` (không `--optimize-for-size`) và chu kỳ nén `120s` (foreground `360s`), giúp CPU mát tương đương Zalo gốc (`~2.82s/phút`) mà vẫn giảm gần một nửa Private Commit (`802.4 MB` vs `1,569.0 MB`). Nếu máy ít RAM và muốn ép Working Set sát hơn, có thể truyền thêm `--compact-interval=45`.
 
 ---
 
@@ -99,10 +99,10 @@ node runtime/deploy-runtime.js
 wscript.exe .\Start_Zalo_Ultra.vbs
 
 # Mở thêm tài khoản thứ 2 hoàn toàn độc lập (tự cấp port 9334 & pipe _ultra_9334)
-.\launcher\zalo-ultra-v2.exe --profile=work --port=9334 --compact-interval=45
+.\launcher\zalo-ultra-v2.exe --profile=work --port=9334 --compact-interval=120
 
 # Hoặc trỏ thẳng thư mục ZaloData tùy chỉnh
-.\launcher\zalo-ultra-v2.exe --data-dir="D:\Zalo_Test_Env\AppData\Roaming\ZaloData" --port=9333 --compact-interval=30
+.\launcher\zalo-ultra-v2.exe --data-dir="D:\Zalo_Test_Env\AppData\Roaming\ZaloData" --port=9333 --compact-interval=120
 ```
 
 ### 4. Đo so sánh RAM/CPU realtime

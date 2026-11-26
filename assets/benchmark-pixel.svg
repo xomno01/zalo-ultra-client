@@ -11,44 +11,44 @@
   <!-- Header -->
   <rect x="16" y="14" width="848" height="26" fill="#161b22" stroke="#30363d" stroke-width="1.5" />
   <rect x="26" y="22" width="10" height="10" fill="#22c55e" />
-  <text x="44" y="31" fill="#e2e8f0" font-size="12" class="hdr">MEASURED FOOTPRINT // ZALO GOC (v26.11.20) VS ZALO ULTRA CLIENT</text>
+  <text x="44" y="31" fill="#e2e8f0" font-size="12" class="hdr">MEASURED FOOTPRINT // ZALO GOC (v26.11.20) VS ZALO ULTRA (320MB / 120s)</text>
 
-  <!-- Section 1: Working Set RAM -->
-  <text x="24" y="62" fill="#94a3b8" font-size="11" class="hdr">PHYSICAL RAM (WORKING SET)</text>
+  <!-- Section 1: Private Commit Memory -->
+  <text x="24" y="62" fill="#94a3b8" font-size="11" class="hdr">PRIVATE COMMIT MEMORY (11 PROCS VS 10 PROCS)</text>
 
   <!-- Bar 1: Official -->
   <text x="24" y="84" fill="#fca5a5" font-size="11" class="mono">Zalo Goc (Official)</text>
   <rect x="210" y="72" width="480" height="16" fill="#161b22" stroke="#30363d" stroke-width="1" />
-  <rect x="212" y="74" width="380" height="12" fill="#ef4444">
-    <animate attributeName="width" values="0;380" dur="1.1s" fill="freeze" />
+  <rect x="212" y="74" width="460" height="12" fill="#ef4444">
+    <animate attributeName="width" values="0;460" dur="1.1s" fill="freeze" />
   </rect>
-  <text x="702" y="84" fill="#fca5a5" font-size="11" class="mono">956.3 MB</text>
+  <text x="702" y="84" fill="#fca5a5" font-size="11" class="mono">1,569.0 MB</text>
 
-  <!-- Bar 2: Ultra Active -->
-  <text x="24" y="108" fill="#7dd3fc" font-size="11" class="mono">Zalo Ultra (Active)</text>
+  <!-- Bar 2: Ultra Private Commit -->
+  <text x="24" y="108" fill="#86efac" font-size="11" class="mono">Zalo Ultra (Balanced)</text>
   <rect x="210" y="96" width="480" height="16" fill="#161b22" stroke="#30363d" stroke-width="1" />
-  <rect x="212" y="98" width="152" height="12" fill="#38bdf8">
-    <animate attributeName="width" values="0;152" dur="1.1s" fill="freeze" />
+  <rect x="212" y="98" width="235" height="12" fill="#22c55e">
+    <animate attributeName="width" values="0;235" dur="1.1s" fill="freeze" />
   </rect>
-  <text x="702" y="108" fill="#7dd3fc" font-size="11" class="mono">380.8 MB (-60%)</text>
+  <text x="702" y="108" fill="#86efac" font-size="11" class="mono">802.4 MB (-48.9%)</text>
 
-  <!-- Bar 3: Ultra Idle/Minimized -->
-  <text x="24" y="132" fill="#86efac" font-size="11" class="mono">Zalo Ultra (Idle/Min)</text>
+  <!-- Bar 3: Ultra Post-Compaction WS -->
+  <text x="24" y="132" fill="#7dd3fc" font-size="11" class="mono">Ultra WS (Post-Trim)</text>
   <rect x="210" y="120" width="480" height="16" fill="#161b22" stroke="#30363d" stroke-width="1" />
-  <rect x="212" y="122" width="38" height="12" fill="#22c55e">
-    <animate attributeName="width" values="0;38" dur="1.1s" fill="freeze" />
+  <rect x="212" y="122" width="8" height="12" fill="#38bdf8">
+    <animate attributeName="width" values="0;8" dur="1.1s" fill="freeze" />
   </rect>
-  <text x="702" y="132" fill="#86efac" font-size="11" class="mono">~65-130 MB (-90%)</text>
+  <text x="702" y="132" fill="#7dd3fc" font-size="11" class="mono">5.5 MB (424.4 MB active)</text>
 
-  <!-- Section 2: Private Commit -->
-  <text x="24" y="160" fill="#94a3b8" font-size="11" class="hdr">PRIVATE COMMIT MEMORY</text>
+  <!-- Section 2: CPU Usage Over Time -->
+  <text x="24" y="160" fill="#94a3b8" font-size="11" class="hdr">CPU USAGE (20.3s DELTA NORMALIZED TO SEC / MIN)</text>
 
-  <text x="24" y="182" fill="#cbd5e1" font-size="11" class="mono">Goc 1555 MB vs Ultra 914 MB</text>
+  <text x="24" y="182" fill="#cbd5e1" font-size="11" class="mono">Old 96MB 26.1s vs New 2.8s</text>
   <rect x="210" y="170" width="480" height="16" fill="#161b22" stroke="#30363d" stroke-width="1" />
-  <rect x="212" y="172" width="476" height="6" fill="#f97316" opacity="0.8" />
-  <rect x="212" y="178" width="280" height="6" fill="#22c55e" />
-  <text x="702" y="182" fill="#86efac" font-size="11" class="mono">-41% Commit</text>
+  <rect x="212" y="172" width="420" height="6" fill="#f97316" opacity="0.65" />
+  <rect x="212" y="178" width="45" height="6" fill="#22c55e" />
+  <text x="702" y="182" fill="#86efac" font-size="11" class="mono">2.82s/min (-9.2x CPU)</text>
 
   <!-- Trade-off Footer -->
-  <text x="24" y="204" fill="#fbbf24" font-size="11" class="mono">Trade-off: Ultra trades higher V8 GC CPU (~26.1s/min vs 7.9s/min) for 2.5x-10x lower RAM.</text>
+  <text x="24" y="204" fill="#86efac" font-size="11" class="mono">Balanced 320MB V8 + 120s trim: 2.82s/min CPU (vs 1.11s/min Goc) &amp; -48.9% Private Commit.</text>
 </svg>

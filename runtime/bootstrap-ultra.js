@@ -113,8 +113,8 @@ if (electron.Tray && electron.Tray.prototype) {
 }
 
 if (app && app.commandLine) {
-  // A. V8 Engine & Garbage Collection (Capped to 96MB to guarantee > 50-90% RAM reduction)
-  app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=96 --optimize-for-size');
+  // A. V8 Engine & Garbage Collection (Capped to 320MB to balance RAM footprint & low CPU GC/JIT overhead)
+  app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=320');
 
   // B. Crash & Telemetry Suppression (Safe flags only - do NOT disable background networking or audio)
   app.commandLine.appendSwitch('disable-breakpad');
