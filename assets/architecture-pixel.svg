@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 280" width="880" height="280" shape-rendering="crispEdges">
+  <style>
+    .mono { font-family: 'Cascadia Mono', 'Fira Code', 'Consolas', monospace; }
+    .hdr { font-family: 'Cascadia Mono', 'Fira Code', 'Consolas', monospace; font-weight: 700; }
+  </style>
+
+  <!-- Canvas -->
+  <rect x="0" y="0" width="880" height="280" fill="#0d1117" rx="10" />
+  <rect x="4" y="4" width="872" height="272" fill="#0d1117" stroke="#30363d" stroke-width="2" rx="8" />
+
+  <!-- Header Bar -->
+  <rect x="16" y="14" width="848" height="28" fill="#161b22" stroke="#30363d" stroke-width="1.5" />
+  <rect x="26" y="23" width="10" height="10" fill="#38bdf8" />
+  <text x="44" y="32" fill="#e2e8f0" font-size="12" class="hdr">SYSTEM ARCHITECTURE // 3-LAYER PIXEL PIPELINE</text>
+  <text x="698" y="32" fill="#4ade80" font-size="11" class="mono">[ALL SIGNALS NOMINAL]</text>
+
+  <!-- LAYER 1: GO SUPERVISOR -->
+  <g transform="translate(24, 60)">
+    <rect x="0" y="0" width="248" height="186" fill="#161b22" stroke="#38bdf8" stroke-width="2" />
+    <rect x="0" y="0" width="248" height="28" fill="#0c4a6e" />
+    <text x="12" y="18" fill="#e0f2fe" font-size="12" class="hdr">1. GO NATIVE SUPERVISOR</text>
+
+    <rect x="12" y="40" width="224" height="26" fill="#0d1117" stroke="#1e293b" stroke-width="1.5" />
+    <rect x="18" y="49" width="8" height="8" fill="#38bdf8">
+      <animate attributeName="opacity" values="1;0.2;1" dur="1.2s" repeatCount="indefinite" />
+    </rect>
+    <text x="34" y="57" fill="#bae6fd" font-size="11" class="mono">zalo-ultra-v2.exe (&lt;10ms)</text>
+
+    <text x="12" y="88" fill="#94a3b8" font-size="11" class="mono">• Win32 EmptyWorkingSet</text>
+    <text x="12" y="108" fill="#94a3b8" font-size="11" class="mono">• CDP V8 HeapProfiler GC</text>
+    <text x="12" y="128" fill="#94a3b8" font-size="11" class="mono">• Auto Free Port (9333+)</text>
+    <text x="12" y="148" fill="#94a3b8" font-size="11" class="mono">• Isolated AppData &amp; Env</text>
+    <text x="12" y="168" fill="#4ade80" font-size="11" class="mono">• Exclude ZaloCall.exe</text>
+  </g>
+
+  <!-- Animated Packet Track 1 -> 2 -->
+  <g transform="translate(274, 146)">
+    <rect x="0" y="4" width="40" height="4" fill="#1e293b" />
+    <rect x="0" y="2" width="10" height="8" fill="#38bdf8">
+      <animate attributeName="x" values="0;30;0" dur="1.6s" repeatCount="indefinite" />
+    </rect>
+  </g>
+
+  <!-- LAYER 2: LEAN ELECTRON RUNTIME -->
+  <g transform="translate(316, 60)">
+    <rect x="0" y="0" width="248" height="186" fill="#161b22" stroke="#22c55e" stroke-width="2" />
+    <rect x="0" y="0" width="248" height="28" fill="#064e3b" />
+    <text x="12" y="18" fill="#dcfce7" font-size="12" class="hdr">2. ELECTRON ULTRA PATCH</text>
+
+    <rect x="12" y="40" width="224" height="26" fill="#0d1117" stroke="#1e293b" stroke-width="1.5" />
+    <rect x="18" y="49" width="8" height="8" fill="#22c55e">
+      <animate attributeName="opacity" values="1;0.2;1" dur="1.4s" begin="0.3s" repeatCount="indefinite" />
+    </rect>
+    <text x="34" y="57" fill="#bbf7d0" font-size="11" class="mono">bootstrap-ultra.js</text>
+
+    <text x="12" y="88" fill="#94a3b8" font-size="11" class="mono">• [CAP-GUARD] Stop ZaloCap</text>
+    <text x="12" y="108" fill="#94a3b8" font-size="11" class="mono">• Kill Sentry &amp; Crashpad</text>
+    <text x="12" y="128" fill="#94a3b8" font-size="11" class="mono">• NullStream CALF / ZLOG</text>
+    <text x="12" y="148" fill="#94a3b8" font-size="11" class="mono">• Block Analytics Packets</text>
+    <text x="12" y="168" fill="#38bdf8" font-size="11" class="mono">• Tray &amp; Taskbar Ultra ID</text>
+  </g>
+
+  <!-- Animated Packet Track 2 -> 3 -->
+  <g transform="translate(566, 146)">
+    <rect x="0" y="4" width="40" height="4" fill="#1e293b" />
+    <rect x="0" y="2" width="10" height="8" fill="#22c55e">
+      <animate attributeName="x" values="0;30;0" dur="1.6s" begin="0.4s" repeatCount="indefinite" />
+    </rect>
+  </g>
+
+  <!-- LAYER 3: NATIVE ZALO CORE -->
+  <g transform="translate(608, 60)">
+    <rect x="0" y="0" width="248" height="186" fill="#161b22" stroke="#f59e0b" stroke-width="2" />
+    <rect x="0" y="0" width="248" height="28" fill="#451a03" />
+    <text x="12" y="18" fill="#fef3c7" font-size="12" class="hdr">3. ISOLATED NATIVE CORE</text>
+
+    <rect x="12" y="40" width="224" height="26" fill="#0d1117" stroke="#1e293b" stroke-width="1.5" />
+    <rect x="18" y="49" width="8" height="8" fill="#f59e0b">
+      <animate attributeName="opacity" values="1;0.2;1" dur="1.6s" begin="0.6s" repeatCount="indefinite" />
+    </rect>
+    <text x="34" y="57" fill="#fde68a" font-size="11" class="mono">Zalo.exe + Addons (100%)</text>
+
+    <text x="12" y="88" fill="#94a3b8" font-size="11" class="mono">• Signal E2EE (@zsecure)</text>
+    <text x="12" y="108" fill="#94a3b8" font-size="11" class="mono">• VoIP Pipe _ultra_&lt;port&gt;</text>
+    <text x="12" y="128" fill="#94a3b8" font-size="11" class="mono">• zocr OCR &amp; JXL Stickers</text>
+    <text x="12" y="148" fill="#94a3b8" font-size="11" class="mono">• SQLite WAL + Media Sync</text>
+    <text x="12" y="168" fill="#fde68a" font-size="11" class="mono">• Drive Auth / Sync Hooks</text>
+  </g>
+
+  <!-- Footer Status -->
+  <text x="24" y="264" fill="#64748b" font-size="11" class="mono">Zero modification to official Zalo installation • Safe multi-instance isolation</text>
+</svg>
