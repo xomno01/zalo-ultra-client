@@ -459,22 +459,25 @@ if (app.isReady()) {
 // ----------------------------------------------------------------------------
 // 7. IN-PROCESS OPTIONAL EXTENSIONS (Google Drive Auth & Safe Guards)
 // ----------------------------------------------------------------------------
+const buildExtensionCandidates = (fileName) => [
+  path.join(__dirname, fileName),
+  path.join(__dirname, 'cloud-vault', fileName),
+  path.join(__dirname, '..', fileName),
+  path.join(process.resourcesPath || '', fileName),
+  path.join(path.dirname(process.execPath || ''), fileName),
+  path.join('D:\\Zalo_Test_Env\\ZaloApp', fileName),
+  path.join('D:\\Zalo_Test_Env', fileName)
+];
+
 const initOptionalExtensions = () => {
   try {
-    const authCandidates = [
-      path.join(path.dirname(process.execPath || ''), 'zalo_drive_auth_server.js'),
-      path.join(process.resourcesPath || '', 'zalo_drive_auth_server.js'),
-      path.join(__dirname, 'zalo_drive_auth_server.js'),
-      path.join(__dirname, '..', 'zalo_drive_auth_server.js'),
-      'D:\\Zalo_Test_Env\\zalo_drive_auth_server.js',
-      'D:\\Zalo_Test_Env\\ZaloApp\\zalo_drive_auth_server.js'
-    ];
+    const authCandidates = buildExtensionCandidates('zalo_drive_auth_server.js');
     const authPath = authCandidates.find(p => fs.existsSync(p));
     if (authPath) {
       const auth = require(authPath);
       if (auth && typeof auth.startServer === 'function') {
         auth.startServer();
-        ultraLog(`[AUTH SERVER] Google Drive Auth Server running on port ${auth.PORT || 8585}`);
+        ultraLog(`[AUTH SERVER] Google Drive Auth Server running on port ${auth.PORT || 8585} (${authPath})`);
       }
     }
   } catch (e) {
@@ -483,21 +486,19 @@ const initOptionalExtensions = () => {
 
   try {
     if (process.env.ENABLE_ULTRA_SYNC === '1') {
-      const daemonCandidates = [
-        path.join(path.dirname(process.execPath || ''), 'zalo_autosync_daemon.js'),
-        path.join(process.resourcesPath || '', 'zalo_autosync_daemon.js'),
-        path.join(__dirname, 'zalo_autosync_daemon.js'),
-        path.join(__dirname, '..', 'zalo_autosync_daemon.js'),
-        'D:\\Zalo_Test_Env\\zalo_autosync_daemon.js',
-        'D:\\Zalo_Test_Env\\ZaloApp\\zalo_autosync_daemon.js'
-      ];
+      const daemonCandidates = buildExtensionCandidates('zalo_autosync_daemon.js');
       const daemonPath = daemonCandidates.find(p => fs.existsSync(p));
       if (daemonPath) {
         const daemon = require(daemonPath);
-        if (daemon && typeof daemon.startDaemon === 'function') daemon.startDaemon();
+        if (daemon && typeof daemon.startDaemon === 'function') {
+          daemon.startDaemon();
+          ultraLog(`[SYNC DAEMON] Started (${daemonPath})`);
+        }
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    ultraLog(`[SYNC DAEMON NOTICE] ${e.message}`);
+  }
 };
 
 if (app.isReady()) {

@@ -84,8 +84,12 @@ Zalo Ultra tích hợp sẵn cơ chế nạp **Zalo Cloud Vault** ngay từ `boo
   - **`cloud_api`:** Kết nối trực tiếp qua **Google Drive API v3** với cơ chế tự động refresh OAuth2 token, không cần cài thêm phần mềm mount ổ đĩa.
 - **Cô lập dữ liệu theo từng tài khoản (`<Tên>_<UID>`):**
   - Mỗi tài khoản Zalo được lưu vào thư mục riêng biệt `Zalo_Cloud_Vault/<Name>_<UID>/<Category>`, đảm bảo chạy nhiều nick song song không bao giờ ghi đè hay trộn dữ liệu của nhau.
-- **Google OAuth2 Local Server (`127.0.0.1:8585`) & Auto-Sync Daemon:**
-  - Server xác thực cục bộ hỗ trợ mở Chrome đăng nhập Google mượt mà, cập nhật trạng thái real-time qua **SSE (`/auth/events`)** và **JSONP (`/auth/jsonp`)** vượt rào cản Private Network Access (PNA) của Chromium.
+- **Google OAuth2 PKCE + Drive API v3 (`127.0.0.1:8585`):**
+  - Hỗ trợ luồng **OAuth 2.0 Authorization Code + PKCE (`S256`)** loopback thật (`GET /oauth/start` → `http://127.0.0.1:8585/oauth/callback`), trao đổi token trực tiếp với `oauth2.googleapis.com/token`, xác minh kết nối qua `GET /drive/v3/about`, lưu token vào `sync_config.json` và tự động làm mới qua `POST /auth/refresh` hoặc retry `401`.
+  - **Cấu hình một lần trên `http://localhost:8585/login`:**
+    1. Tạo **OAuth client ID** loại **Desktop app** trong Google Cloud Console (bật **Google Drive API**, redirect URI `http://127.0.0.1:8585/oauth/callback`).
+    2. Nhập **Client ID** (và Client Secret nếu có) vào form trên `http://localhost:8585/login` → bấm **Lưu cấu hình OAuth** (`POST /auth/config`).
+    3. Bấm **Đăng nhập bằng Google (OAuth2 thật)** để cấp quyền `drive.file`, trạng thái đồng bộ tự động kích hoạt chế độ `cloud_api` và cập nhật real-time qua **SSE (`/auth/events`)** / **JSONP (`/auth/jsonp`)**.
   - Tự động kích hoạt trong `bootstrap-ultra.js` khi tìm thấy module Auth/Daemon (bật daemon nền bằng biến môi trường `ENABLE_ULTRA_SYNC=1`).
 
 ---
@@ -145,9 +149,13 @@ wscript.exe .\Start_Zalo_Ultra.vbs
 .\launcher\zalo-ultra-v2.exe --data-dir="D:\Zalo_Test_Env\AppData\Roaming\ZaloData" --port=9333 --compact-interval=120
 ```
 
-### 4. Đo so sánh RAM/CPU realtime
+### 4. Đo so sánh RAM/CPU & Chạy kiểm thử E2E Cloud Vault
 ```powershell
+# Chạy benchmark RAM/CPU realtime
 powershell -ExecutionPolicy Bypass -File .\benchmark\benchmark_compare.ps1
+
+# Chạy E2E test OAuth2 PKCE + Google Drive API v3 + HybridDriveManager (mock loopback, zero deps)
+node .\tests\cloud_vault_e2e.test.js
 ```
 
 ---
@@ -168,10 +176,18 @@ zalo-ultra-client/
 │   ├── generate_ultra_icon.py
 │   └── query_cdp.js
 ├── runtime/
+│   ├── cloud-vault/                 # Zalo Cloud Vault (OAuth2 PKCE + Drive API v3 + Auto-Sync)
+│   │   ├── GoogleDriveApiEngine.js  # Google Drive API v3 client (401 retry, multipart/resumable)
+│   │   ├── HybridDriveManager.js    # Orchestrator: mounted_drive / cloud_api / local_fallback
+│   │   ├── MountedDriveEngine.js    # Đồng bộ RaiDrive U:\ & Google Drive for Desktop G:\
+│   │   ├── zalo_drive_auth_server.js # Local OAuth2 PKCE loopback server (127.0.0.1:8585)
+│   │   └── zalo_autosync_daemon.js  # Real-time media & SQLite snapshot auto-sync daemon
 │   ├── bootstrap-ultra.js           # Electron patch: CAP-GUARD, Zero Sentry/CALF, Tray hook
 │   ├── chromium-flags.json          # Tài liệu cấu hình cờ Chromium & V8
 │   ├── deploy-runtime.js            # Script cài đặt an toàn vào resources/app
 │   └── REVERSE_ENGINEERING_REPORT.md
+├── tests/
+│   └── cloud_vault_e2e.test.js      # E2E tests cho OAuth2 PKCE, Drive API v3 & HybridDriveManager
 ├── benchmark/
 │   └── benchmark_compare.ps1        # Script benchmark RAM/CPU realtime
 ├── Start_Zalo_Ultra.vbs             # Script chạy nền không cửa sổ console
