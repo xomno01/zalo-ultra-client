@@ -8,11 +8,12 @@
 [![Electron Runtime](https://img.shields.io/badge/Runtime-Lean%20Electron%20Patch-47848F?style=for-the-badge&logo=electron&logoColor=white)](#)
 [![Platform](https://img.shields.io/badge/OS-Windows%20x64-0078D6?style=for-the-badge&logo=windows&logoColor=white)](#)
 [![Multi-Instance](https://img.shields.io/badge/Multi--Instance-Isolated%20VoIP%20Pipes-22C55E?style=for-the-badge)](#)
+[![Google Drive Sync](https://img.shields.io/badge/Cloud%20Vault-Google%20Drive%20Hybrid-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](#-đồng-bộ-google-drive--zalo-cloud-vault)
 [![Telemetry](https://img.shields.io/badge/Telemetry-Zero%20Sentry%20%2F%20CALF-F59E0B?style=for-the-badge)](#)
 
 **Zalo PC siêu nhẹ RAM, chạy song song nhiều tài khoản không xung đột, giữ 100% tính năng gốc.**
 
-[Tính năng](#-danh-sách-tính-năng-đầy-đủ) • [Kiến trúc](#-kiến-trúc-3-lớp) • [Đo hiệu năng thực tế](#-đo-hiệu-năng-thực-tế-zalo-gốc-vs-zalo-ultra) • [Cài đặt & Chạy](#-hướng-dẫn-cài-đặt--sử-dụng)
+[Tính năng](#-danh-sách-tính-năng-đầy-đủ) • [Đồng bộ Google Drive](#-đồng-bộ-google-drive--zalo-cloud-vault) • [Kiến trúc](#-kiến-trúc-3-lớp) • [Đo hiệu năng thực tế](#-đo-hiệu-năng-thực-tế-zalo-gốc-vs-zalo-ultra) • [Cài đặt & Chạy](#-hướng-dẫn-cài-đặt--sử-dụng)
 
 </div>
 
@@ -47,6 +48,28 @@ Zalo Ultra không viết lại app giả mạo (tránh bị khóa tài khoản b
 - **Tách nhóm Taskbar & Icon Tray:** Gán `AppUserModelID = com.vng.zalo.ultra`, đổi tiêu đề cửa sổ thành `Zalo Ultra`, gán icon riêng (`zalo-ultra.ico`/`png`), và hook `Tray.prototype.setImage` để giữ icon Ultra dưới khay hệ thống.
 - **Khởi động êm không cửa sổ đen:** Hỗ trợ [Start_Zalo_Ultra.vbs](Start_Zalo_Ultra.vbs) chạy ngầm subsystem `-H windowsgui`.
 - **Giữ 100% Addon Native & Hook mở rộng:** Bảo toàn `@zsecure/zpc` (Signal E2EE), `zcall` (VoIP), `zocr` (OCR ảnh), `node_sqlite3`, JXL stickers, WebAssembly; đồng thời hỗ trợ nạp tự động `zalo_drive_auth_server.js` và `zalo_autosync_daemon.js` (khi bật `ENABLE_ULTRA_SYNC=1`) nếu có trong thư mục app.
+
+---
+
+## ☁️ Đồng Bộ Google Drive — Zalo Cloud Vault
+
+<div align="center">
+  <img src="assets/gdrive-vault-pixel.svg" alt="Zalo Cloud Vault Hybrid Google Drive Sync" width="100%" />
+</div>
+
+Zalo Ultra tích hợp sẵn cơ chế nạp **Zalo Cloud Vault** ngay từ `bootstrap-ultra.js` (`zalo_drive_auth_server.js` và `zalo_autosync_daemon.js`), giải quyết triệt để bài toán backup & đồng bộ lịch sử chat/media Zalo PC lên Google Drive mà **không làm hỏng database**.
+
+- **Kiến trúc Hybrid Smart (Chống hỏng SQLite WAL 100%):**
+  - Toàn bộ tiến trình Zalo luôn đọc/ghi trực tiếp trên **SSD nội bộ** (tuyệt đối không dùng symlink/junction trỏ SQLite WAL thẳng ra ổ mạng như RaiDrive/Google Drive Mount, vốn gây lỗi corrupt DB khi có xung đột lock).
+  - Daemon tự động quét và đồng bộ **media tăng dần (incremental)** kết hợp tạo **compressed point-in-time DB snapshots** (có versioning theo mốc thời gian).
+- **2 chế độ truyền tải tự động (`HybridDriveManager`):**
+  - **`mounted_drive`:** Tự động phát hiện ổ Google Drive for Desktop (`G:\My Drive`), RaiDrive (`U:\`), hoặc thư mục đồng bộ `Google Drive` / `OneDrive` trên máy.
+  - **`cloud_api`:** Kết nối trực tiếp qua **Google Drive API v3** với cơ chế tự động refresh OAuth2 token, không cần cài thêm phần mềm mount ổ đĩa.
+- **Cô lập dữ liệu theo từng tài khoản (`<Tên>_<UID>`):**
+  - Mỗi tài khoản Zalo được lưu vào thư mục riêng biệt `Zalo_Cloud_Vault/<Name>_<UID>/<Category>`, đảm bảo chạy nhiều nick song song không bao giờ ghi đè hay trộn dữ liệu của nhau.
+- **Google OAuth2 Local Server (`127.0.0.1:8585`) & Auto-Sync Daemon:**
+  - Server xác thực cục bộ hỗ trợ mở Chrome đăng nhập Google mượt mà, cập nhật trạng thái real-time qua **SSE (`/auth/events`)** và **JSONP (`/auth/jsonp`)** vượt rào cản Private Network Access (PNA) của Chromium.
+  - Tự động kích hoạt trong `bootstrap-ultra.js` khi tìm thấy module Auth/Daemon (bật daemon nền bằng biến môi trường `ENABLE_ULTRA_SYNC=1`).
 
 ---
 
@@ -118,6 +141,7 @@ powershell -ExecutionPolicy Bypass -File .\benchmark\benchmark_compare.ps1
 zalo-ultra-client/
 ├── assets/                          # Animated pixel-art SVGs cho README
 │   ├── hero-pixel-banner.svg
+│   ├── gdrive-vault-pixel.svg
 │   ├── architecture-pixel.svg
 │   └── benchmark-pixel.svg
 ├── launcher/
