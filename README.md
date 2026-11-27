@@ -25,9 +25,9 @@
 
 | Phiên bản tải về | Dành cho ai | Tải trực tiếp |
 | :--- | :--- | :--- |
-| **`ZaloUltraClient-v2.0.0-win64.exe`** | Tải 1 file duy nhất, bấm đúp chạy ngay lập tức | [![Download EXE](https://img.shields.io/badge/T%E1%BA%A3i%20B%E1%BA%A3n%20.EXE-1--Click%20Run-22C55E?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/xomno01/zalo-ultra-client/releases/latest/download/ZaloUltraClient-v2.0.0-win64.exe) |
-| **`ZaloUltraClient-v2.0.0-win64-portable.zip`** | Bản Portable kèm nút `Tao_Icon_Desktop.bat` & hướng dẫn tiếng Việt | [![Download ZIP](https://img.shields.io/badge/T%E1%BA%A3i%20B%E1%BA%A3n%20.ZIP-Portable%20Pack-38BDF8?style=for-the-badge&logo=files&logoColor=white)](https://github.com/xomno01/zalo-ultra-client/releases/latest/download/ZaloUltraClient-v2.0.0-win64-portable.zip) |
-| **Tất cả phiên bản (Releases)** | Xem changelog & mã kiểm tra SHA-256 | [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases%20v2.0.0-0D1117?style=for-the-badge&logo=github&logoColor=white)](https://github.com/xomno01/zalo-ultra-client/releases/latest) |
+| **`ZaloUltraClient-v2.0.1-win64.exe`** | Tải 1 file duy nhất, bấm đúp chạy ngay lập tức | [![Download EXE](https://img.shields.io/badge/T%E1%BA%A3i%20B%E1%BA%A3n%20.EXE-1--Click%20Run-22C55E?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/xomno01/zalo-ultra-client/releases/latest/download/ZaloUltraClient-v2.0.1-win64.exe) |
+| **`ZaloUltraClient-v2.0.1-win64-portable.zip`** | Bản Portable kèm `cloud-vault`, nút `Tao_Icon_Desktop.bat` & hướng dẫn tiếng Việt | [![Download ZIP](https://img.shields.io/badge/T%E1%BA%A3i%20B%E1%BA%A3n%20.ZIP-Portable%20Pack-38BDF8?style=for-the-badge&logo=files&logoColor=white)](https://github.com/xomno01/zalo-ultra-client/releases/latest/download/ZaloUltraClient-v2.0.1-win64-portable.zip) |
+| **Tất cả phiên bản (Releases)** | Xem changelog & mã kiểm tra SHA-256 | [![GitHub Releases](https://img.shields.io/badge/GitHub-Releases%20v2.0.1-0D1117?style=for-the-badge&logo=github&logoColor=white)](https://github.com/xomno01/zalo-ultra-client/releases/latest) |
 
 - **Cách dùng siêu đơn giản:**
   1. Tải bản **`.exe`** (hoặc tải **`.zip`** rồi giải nén ra một thư mục cố định như `D:\ZaloUltraClient`).
